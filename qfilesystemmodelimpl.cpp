@@ -10,7 +10,7 @@ Qt::ItemFlags QFileSystemModelImpl::flags(const QModelIndex &index) const
     return Qt::ItemIsUserCheckable|QFileSystemModel::flags(index);
 }
 
-QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role)
+QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
 {
     if(!index.isValid()){
         return QVariant();
@@ -54,10 +54,10 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role)
             }
         }
 
-        if (role != Qt::DisplayRole)
+        /*if (role != Qt::DisplayRole)
         {
             return QVariant();
-        }
+        }*/
 
         return QFileSystemModel::data(index, role);
 
@@ -65,6 +65,10 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role)
 
 bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &value, int role /*= Qt::EditRole*/ )
 {
+    if(hasChildren(index) && rowCount(index) == 0){
+        return false;
+    }
+    setFileCheckState(filePath(index),value);
     if (role == Qt::CheckStateRole && index.column() == 0)
     {
         if (value == Qt::Unchecked)
@@ -83,7 +87,7 @@ bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &va
         if (hasChildren(index))
         {
             QString strFilePath = filePath(index);
-            setFileCheckState(strFilePath, value);
+            //setFileCheckState(strFilePath, value);
 
             int iChildCount = rowCount(index);
 
@@ -103,5 +107,14 @@ bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &va
 
 void QFileSystemModelImpl::setFileCheckState(QString filePath, QVariant value)
 {
+    if(value == Qt::Checked){
+        elf_Path.insert(filePath);
+    }else{
+        elf_Path.remove(filePath);
+    }
+}
 
+QSet<QString> QFileSystemModelImpl::getElf_Path() const
+{
+    return elf_Path;
 }

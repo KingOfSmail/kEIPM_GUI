@@ -24,7 +24,8 @@ SOURCES += \
     finish_close.cpp \
     main.cpp \
     qfilesystemmodelimpl.cpp \
-    widget.cpp
+    widget.cpp \
+    api_stubs.c
 
 HEADERS += \
     ca_inf.h \
@@ -32,7 +33,8 @@ HEADERS += \
     finish_close.h \
     qfilesystemmodelimpl.h \
     widget.h \
-
+    api.h \
+    errors.h
 
 FORMS += \
     dialog.ui \
