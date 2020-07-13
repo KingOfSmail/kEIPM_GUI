@@ -1,8 +1,13 @@
 #ifndef ERRORS_H_
 #define ERRORS_H_
 
+#ifdef errno
+#undef errno
+#endif
+
 #define ERROR(e, r) \
 	(keipm_err_t) { .errno = e, .reason = r }
+
 
 #define RETURN_ON_ERROR(expr) \
 	do { \
