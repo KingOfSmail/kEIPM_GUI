@@ -70,7 +70,9 @@ void Widget::on_lineEd_RootCommon_editingFinished()
 void Widget::on_Btn_Inport_clicked()
 {
     this->ca_inf.setCASign_inport_elf_Path(qfsm_forCASign_Page->elf_Path);
-    if(1/*这里调用签名函数*/){
+
+    error = keipm_gen_key_pair();
+    if(1){
         this->fin = new Finish_Close();
         fin->setWindowTitle("Finish");
         fin->setFlag(true);

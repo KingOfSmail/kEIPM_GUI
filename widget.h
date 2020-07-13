@@ -8,6 +8,8 @@
 #include "ca_inf.h"
 #include "dialog.h"
 #include "finish_close.h"
+#include "api.h"
+#include "errors.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -81,5 +83,7 @@ private:
     Finish_Close *fin;
     QFileSystemModelImpl *qfsm_forRsaSign_Page,*qfsm_forCASign_Page;
     QWidget *page[3];
+
+    keipm_err_t error;
 };
 #endif // WIDGET_H
