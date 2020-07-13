@@ -10,7 +10,8 @@ extern "C" {
 // 接口C函数原型
 // extern keipm_err_t 接口名(参数...);
 
-extern keipm_err_t keipm_gen_key_pair();
+extern keipm_err_t keipm_set_UserCA(const char* UserCA_Path,const char* elf_Path);
+extern keipm_err_t keipm_set_Key(const char* publicKey_Path,const char* elf_Path);
 
 
 #ifdef __cplusplus

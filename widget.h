@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTabBar>
+#include<QTextCodec>
 
 #include "qfilesystemmodelimpl.h"
 #include "ca_inf.h"
@@ -24,6 +25,8 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+    void newpage_Of_Finished(Finish_Close*,QSet<QString>,QString,keipm_err_t (*Sign_elf_)(const char*,const char*));
+
 private slots:
     void on_lineEd_RootCountry_editingFinished();
 
@@ -35,8 +38,8 @@ private slots:
 
     void on_Btn_Inport_clicked();
 
-    void set_Content_lineEd_CASign_CA();
-    void set_Content_lineEd_RsaSign_rsa();
+    void set_Content_lineEd_CASign_CA(Dialog* dialog);
+    void set_Content_lineEd_RsaSign_rsa(Dialog* dialog);
 
     void on_Btn_CASign_CA_clicked();
 
@@ -60,7 +63,7 @@ private slots:
 
     void on_Btn_User_Visit_RootCA_clicked();
 
-    void set_Content_lineEd_User_InputPath_RootCA();
+    void set_Content_lineEd_User_InputPath_RootCA(Dialog* dialog);
 
     void on_lineEd_UserCountry_editingFinished();
 
@@ -76,11 +79,13 @@ private slots:
 
     void on_lineEd_RsaSign_rsa_editingFinished();
 
+    const char *QstrToChar(QString str);
+
+
+
 private:
     Ui::Widget *ui;
     CA_inf ca_inf;
-    Dialog *dialog;
-    Finish_Close *fin;
     QFileSystemModelImpl *qfsm_forRsaSign_Page,*qfsm_forCASign_Page;
     QWidget *page[3];
 

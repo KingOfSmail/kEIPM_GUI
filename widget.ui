@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>496</height>
+    <width>502</width>
+    <height>509</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>kEIPM</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_8">
+  <layout class="QVBoxLayout" name="verticalLayout_9">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -33,7 +33,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>导入需要签名的elf文件以及公钥密匙</string>
+          <string>导入需要签名的elf文件以及公钥密匙:</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -42,7 +42,7 @@
              <item>
               <widget class="QLabel" name="lab_RsaSign_rsa">
                <property name="text">
-                <string>公钥：</string>
+                <string>公钥:</string>
                </property>
                <property name="buddy">
                 <cstring>lineEd_RsaSign_rsa</cstring>
@@ -68,7 +68,7 @@
              <item>
               <widget class="QLabel" name="lab_RsaSign_elf">
                <property name="text">
-                <string>elf文件：</string>
+                <string>elf文件:</string>
                </property>
                <property name="buddy">
                 <cstring>treeView_RsaSign_elf</cstring>
@@ -148,7 +148,7 @@
              <item>
               <widget class="QLabel" name="lab_CASign_CA">
                <property name="text">
-                <string>证书：</string>
+                <string>证书:</string>
                </property>
                <property name="buddy">
                 <cstring>lineEd_CASign_CA</cstring>
@@ -174,7 +174,7 @@
              <item>
               <widget class="QLabel" name="lab_CASign_elf">
                <property name="text">
-                <string>elf文件：</string>
+                <string>elf文件:</string>
                </property>
                <property name="buddy">
                 <cstring>treeView_CASign_elf</cstring>
@@ -248,53 +248,131 @@
       <attribute name="title">
        <string>生成公私钥</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>一键生成公私钥：</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_13">
-          <item>
-           <widget class="QTextEdit" name="textEdit"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame_8">
+        <widget class="QFrame" name="frame_9">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
           <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="Btn_GetRsa_Create">
+           <widget class="QLabel" name="lab_GetRsa_inport_privateKey">
             <property name="text">
-             <string>一键生成</string>
+             <string>生成私钥</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="Btn_GetRsa_Cancel">
+           <widget class="QLineEdit" name="lineEd_GetRsa_inport_privateKey"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Btn_GetRsa_inport_privateKey">
             <property name="text">
-             <string>退出</string>
+             <string>生成</string>
             </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>导入私钥以生成公钥</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_16">
+          <item>
+           <widget class="QLabel" name="lab_GetRsa_inport_public_privateKey">
+            <property name="text">
+             <string>导入私钥</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEd_get_inport_public_privateKey"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Btn_GetRsa_publicKey">
+            <property name="text">
+             <string>生成</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>一键生成公私钥:</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QWidget" name="widget_6" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="lab_GetRsa_privaPath">
+               <property name="text">
+                <string>私钥地址:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEd_GetRsa_privaPath"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_7" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <item>
+              <widget class="QLabel" name="lab_GetRsa_publicPath">
+               <property name="text">
+                <string>公钥地址:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEd_GetRsa_publicPath"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_8" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_18">
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>245</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Btn_GetRsa_Create">
+               <property name="text">
+                <string>一键生成</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Btn_GetRsa_Cancel">
+               <property name="text">
+                <string>退出</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -319,7 +397,7 @@
           <item>
            <widget class="QLabel" name="lab_User_inputRootCA">
             <property name="text">
-             <string>导入根证书：</string>
+             <string>导入根证书:</string>
             </property>
             <property name="buddy">
              <cstring>lineEd_User_InputPath_RootCA</cstring>
@@ -425,7 +503,7 @@
           <item>
            <widget class="QLabel" name="lab_Output_UserCA">
             <property name="text">
-             <string>生成用户证书地址：</string>
+             <string>生成用户证书地址:</string>
             </property>
             <property name="buddy">
              <cstring>lineEd_OutPutPath_UserCA</cstring>
@@ -493,7 +571,7 @@
           </size>
          </property>
          <property name="title">
-          <string>请输入签名信息：</string>
+          <string>请输入签名信息:</string>
          </property>
          <layout class="QFormLayout" name="formLayout_3">
           <item row="0" column="1">
@@ -582,7 +660,7 @@
           <item>
            <widget class="QLabel" name="lab_RootCA">
             <property name="text">
-             <string>生成根证书地址：</string>
+             <string>生成根证书地址:</string>
             </property>
             <property name="buddy">
              <cstring>Line_output_RootCA</cstring>
@@ -685,9 +763,6 @@
   <tabstop>Btn_Inport</tabstop>
   <tabstop>Btn_Cancel</tabstop>
   <tabstop>Manage_model</tabstop>
-  <tabstop>textEdit</tabstop>
-  <tabstop>Btn_GetRsa_Create</tabstop>
-  <tabstop>Btn_GetRsa_Cancel</tabstop>
   <tabstop>lineEd_User_InputPath_RootCA</tabstop>
   <tabstop>Btn_User_Visit_RootCA</tabstop>
   <tabstop>lineEd_UserCountry</tabstop>

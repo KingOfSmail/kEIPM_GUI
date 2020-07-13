@@ -8,7 +8,6 @@
 #define ERROR(e, r) \
 	(keipm_err_t) { .errno = e, .reason = r }
 
-
 #define RETURN_ON_ERROR(expr) \
 	do { \
 		keipm_err_t ret_##__LINE__ = expr; \
@@ -33,6 +32,5 @@ typedef struct keipm_err {
 	keipm_errno_t errno;
 	const char *reason;
 } keipm_err_t;
-
 
 #endif // ERRORS_H_S

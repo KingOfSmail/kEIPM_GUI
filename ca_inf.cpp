@@ -186,3 +186,14 @@ void CA_inf::setRsaSign_inport_elf_Path(const QSet<QString> qs)
 }
 
 
+QSet<QString> CA_inf::getRsaSign_inport_elf_Path() const
+{
+    return RsaSign_inport_elf_Path;
+}
+
+QSet<QString> CA_inf::getCASign_inport_elf_Path() const
+{
+    return CASign_inport_elf_Path;
+}
+
+

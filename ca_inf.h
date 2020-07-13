@@ -61,6 +61,10 @@ public:
     void setCASign_inport_elf_Path(const QSet<QString> qs);
     void setRsaSign_inport_elf_Path(const QSet<QString> qs);
 
+    QSet<QString> getRsaSign_inport_elf_Path() const;
+
+    QSet<QString> getCASign_inport_elf_Path() const;
+
 private:
     //save RootCA Page
     QString Root_Common_name;
