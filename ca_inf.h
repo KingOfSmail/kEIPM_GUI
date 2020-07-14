@@ -4,6 +4,52 @@
 #include <QSet>
 #include <QString>
 
+struct RootCA_Page{
+    QString Root_Common_name;
+    QString Root_Org_name;
+    QString Root_Local;
+    QString Root_State;
+    QString Root_Country;
+    QString Root_outPut_CA_Path;
+
+};
+
+struct UserCA_Page{
+    //save UserCA Page
+    QString User_input_RootCA_Path;
+    QString User_Common_name;
+    QString User_Org_name;
+    QString User_Local;
+    QString User_State;
+    QString User_Country;
+    QString User_outPut_CA_Path;
+};
+
+struct CreateRsaPage{
+    //save CreateRsa Page
+    QString CreateRsa_Private_Key_Path;
+    QString CreateRsa_Public_Key_Path;
+
+    QString CreateRsa_inport_PrivsteKey_path;
+
+
+};
+
+
+struct CASign_Page{
+    //save CASign Page
+    QString CASign_inport_UserCA_Path;
+    QSet<QString> CASign_inport_elf_Path;
+
+};
+
+struct RsaSige_Page{
+    //save RsaSign Page
+    QString RsaSign_inport_PublicKey_Path;
+    QSet<QString> RsaSign_inport_elf_Path;
+};
+
+
 class CA_inf
 {
 public:
@@ -46,8 +92,8 @@ public:
     QString getUser_outPut_CA_Path() const;
     void setUser_outPut_CA_Path(const QString &value);
 
-    QString getCreateRsa_Public_Key() const;
-    void setCreateRsa_Public_Key(const QString &value);
+    QString getCreateRsa_Private_Key_Path() const;
+    void setCreateRsa_Private_Key_Path(const QString &value);
 
     QString getCreateRsa_Public_Key_Path() const;
     void setCreateRsa_Public_Key_Path(const QString &value);
@@ -61,40 +107,26 @@ public:
     void setCASign_inport_elf_Path(const QSet<QString> qs);
     void setRsaSign_inport_elf_Path(const QSet<QString> qs);
 
+    QString getCreateRsa_inport_PrivsteKey_path() const;
+    void setCreateRsa_inport_PrivsteKey_path(const QString &value);
+
+    QString getRoot_outPut_CA_Path() const;
+    void setRoot_outPut_CA_Path(const QString &value);
+
     QSet<QString> getRsaSign_inport_elf_Path() const;
 
     QSet<QString> getCASign_inport_elf_Path() const;
 
+    void reset_ca_inf();
+
 private:
-    //save RootCA Page
-    QString Root_Common_name;
-    QString Root_Org_name;
-    QString Root_Local;
-    QString Root_State;
-    QString Root_Country;
-    QString Root_outPut_CA_Path;
+    RootCA_Page rootCA_page;
+    UserCA_Page userCA_Page;
+    CreateRsaPage createRsa_Page;
+    CASign_Page caSign_Page;
+    RsaSige_Page rsaSign_Page;
 
-    //save UserCA Page
-    QString User_input_RootCA_Path;
-    QString User_Common_name;
-    QString User_Org_name;
-    QString User_Local;
-    QString User_State;
-    QString User_Country;
-    QString User_outPut_CA_Path;
-
-    //save CreateRsa Page
-    QString CreateRsa_Public_Key;
-    QString CreateRsa_Public_Key_Path;
-
-    //save CASign Page
-    QString CASign_inport_UserCA_Path;
-    QSet<QString> CASign_inport_elf_Path;
-
-
-    //save RsaSign Page
-    QString RsaSign_inport_PublicKey_Path;
-    QSet<QString> RsaSign_inport_elf_Path;
 };
+
 
 #endif // CA_INF_H

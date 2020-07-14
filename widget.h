@@ -40,6 +40,8 @@ private slots:
 
     void set_Content_lineEd_CASign_CA(Dialog* dialog);
     void set_Content_lineEd_RsaSign_rsa(Dialog* dialog);
+    void set_Content_lineEd_GetRsa_inport_public_privateKey(Dialog* dialog);
+    void set_Content_lineEd_User_InputPath_RootCA(Dialog* dialog);
 
     void on_Btn_CASign_CA_clicked();
 
@@ -63,8 +65,6 @@ private slots:
 
     void on_Btn_User_Visit_RootCA_clicked();
 
-    void set_Content_lineEd_User_InputPath_RootCA(Dialog* dialog);
-
     void on_lineEd_UserCountry_editingFinished();
 
     void on_lineEd_UserState_editingFinished();
@@ -79,9 +79,20 @@ private slots:
 
     void on_lineEd_RsaSign_rsa_editingFinished();
 
-    const char *QstrToChar(QString str);
 
+    void on_Btn_GetRsa_publicKey_clicked();
 
+    void copy_privateKey_To_CreatePublicKey(QString);
+
+    void on_Btn_GetRsa_Create_privateKey_clicked();
+
+    void on_Btn_GetRsa_Create_publicKey_clicked();
+
+    void on_Btn_GetRsa_Create_clicked();
+
+    void on_Btn_output_RootCA_clicked();
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::Widget *ui;
@@ -89,6 +100,8 @@ private:
     QFileSystemModelImpl *qfsm_forRsaSign_Page,*qfsm_forCASign_Page;
     QWidget *page[3];
 
-    keipm_err_t error;
+    void remindPage(Finish_Close* fin,keipm_err_t error);
+    void remindPage(Finish_Close* fin,keipm_err_t error_priv,keipm_err_t error_pub);
+    void QstrToChar(QByteArray* ba,QString str,const char* char_str);
 };
 #endif // WIDGET_H
