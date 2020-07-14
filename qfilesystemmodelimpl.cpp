@@ -1,13 +1,9 @@
 #include "qfilesystemmodelimpl.h"
 
-QFileSystemModelImpl::QFileSystemModelImpl():QFileSystemModel()
+QFileSystemModelImpl::QFileSystemModelImpl(QTreeView *treeView)
+    : QFileSystemModel(),
+      m_treeView(treeView)
 {
-
-}
-
-const QSet<QString> &QFileSystemModelImpl::getSelectedFiles()
-{
-    return elf_Path;
 }
 
 Qt::ItemFlags QFileSystemModelImpl::flags(const QModelIndex &index) const
@@ -49,6 +45,9 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
                 if (iChecked == Qt::Checked)
                 {
                     m_indexMap[index] = true;
+                    if(hasChildren(index) && rowCount(index) == 0){
+                        m_treeView->expand(index);
+                    }
                 }
                 else
                 {
@@ -59,11 +58,6 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
             }
         }
 
-        /*if (role != Qt::DisplayRole)
-        {
-            return QVariant();
-        }*/
-
         return QFileSystemModel::data(index, role);
 
 }
@@ -71,9 +65,8 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
 bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &value, int role /*= Qt::EditRole*/ )
 {
     if(hasChildren(index) && rowCount(index) == 0){
-        return false;
+        m_treeView->expand(index);
     }
-    setFileCheckState(filePath(index),value);
     if (role == Qt::CheckStateRole && index.column() == 0)
     {
         if (value == Qt::Unchecked)
@@ -92,7 +85,6 @@ bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &va
         if (hasChildren(index))
         {
             QString strFilePath = filePath(index);
-            //setFileCheckState(strFilePath, value);
 
             int iChildCount = rowCount(index);
 
@@ -110,16 +102,14 @@ bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &va
     return QFileSystemModel::setData(index, value, role);
 }
 
-void QFileSystemModelImpl::setFileCheckState(QString filePath, QVariant value)
+QSet<QString> QFileSystemModelImpl::getSelectedFiles() const
 {
-    if(value == Qt::Checked){
-        elf_Path.insert(filePath);
-    }else{
-        elf_Path.remove(filePath);
+    QSet<QString> ret;
+    QMap<QModelIndex,bool>::const_iterator it = m_indexMap.constBegin();
+    for(;it!=m_indexMap.constEnd(); ++it) {
+        if (it.value()) {
+            ret.insert(filePath(it.key()));
+        }
     }
-}
-
-QSet<QString> QFileSystemModelImpl::getElf_Path() const
-{
-    return elf_Path;
+    return ret;
 }
