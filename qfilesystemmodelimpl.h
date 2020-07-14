@@ -4,13 +4,14 @@
 #include <QFileSystemModel>
 #include <QAbstractItemModel>
 #include <QSet>
+#include <QtWidgets/QTreeView>
 
 class QFileSystemModelImpl : public QFileSystemModel
 {
 public:
-    QFileSystemModelImpl();
+    QFileSystemModelImpl(QTreeView *treeView);
 
-    const QSet<QString> &getSelectedFiles();
+    QSet<QString> getSelectedFiles() const;
 
 private:
     int columnCount(const QModelIndex &parent) const
@@ -19,16 +20,13 @@ private:
         return 1;
     }
 
-
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QVariant data(const QModelIndex &index, int role) const;
     bool setData( const QModelIndex &index, const QVariant &value, int role);
 
-    void setFileCheckState(QString filePath,QVariant value);
-
     mutable QMap<QModelIndex,bool> m_indexMap;
-    QSet<QString> elf_Path;
-    QSet<QString> getElf_Path() const;
+    QTreeView *m_treeView;
+
 };
 
 #endif // QFILESYSTEMMODELIMPL_H

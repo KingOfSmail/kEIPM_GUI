@@ -23,13 +23,13 @@ Widget::Widget(QWidget *parent)
 
 
     //为前两个签名页treeview设置model
-    qfsm_forRsaSign_Page = new QFileSystemModelImpl();
+    qfsm_forRsaSign_Page = new QFileSystemModelImpl(ui->treeView_RsaSign_elf);
     qfsm_forRsaSign_Page->setRootPath("/");
     ui->treeView_RsaSign_elf->setModel(qfsm_forRsaSign_Page);
     ui->treeView_RsaSign_elf->setRootIndex(qfsm_forRsaSign_Page->index("/"));
     ui->treeView_RsaSign_elf->setColumnWidth(0,200);
 
-    qfsm_forCASign_Page = new QFileSystemModelImpl();
+    qfsm_forCASign_Page = new QFileSystemModelImpl(ui->treeView_CASign_elf);
     qfsm_forCASign_Page->setRootPath("/");
     ui->treeView_CASign_elf->setModel(qfsm_forCASign_Page);
     ui->treeView_CASign_elf->setRootIndex(qfsm_forCASign_Page->index("/"));
@@ -198,9 +198,14 @@ void Widget::on_Btn_Cancel_clicked()
 /**
  * @brief RSA签名按钮
  */
+#include <qDebug>
 void Widget::on_Btn_RsaSign_Inport_clicked()
 {
     const QSet<QString> &Total_Elf_Path = qfsm_forRsaSign_Page->getSelectedFiles();
+
+    for(QSet<QString>::const_iterator it = Total_Elf_Path.constBegin(); it!=Total_Elf_Path.constEnd();++it) {
+        qDebug()<<*it;
+    }
 
     QString Public_Key = ui->lineEd_RsaSign_rsa->text();
     newpage_Of_Finished(Total_Elf_Path,true,Public_Key,keipm_set_Key);
