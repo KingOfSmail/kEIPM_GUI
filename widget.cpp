@@ -210,14 +210,9 @@ void Widget::on_Btn_Cancel_clicked()
 /**
  * @brief RSA签名按钮
  */
-#include <qDebug>
 void Widget::on_Btn_RsaSign_Inport_clicked()
 {
     const QSet<QString> &Total_Elf_Path = qfsm_forRsaSign_Page->getSelectedFiles();
-
-    for(QSet<QString>::const_iterator it = Total_Elf_Path.constBegin(); it!=Total_Elf_Path.constEnd();++it) {
-        qDebug()<<*it;
-    }
 
     QString Public_Key = ui->lineEd_RsaSign_rsa->text();
     newpage_Of_Finished(Total_Elf_Path,true,Public_Key,keipm_set_Key);
