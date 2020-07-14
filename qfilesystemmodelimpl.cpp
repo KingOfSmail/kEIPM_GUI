@@ -5,6 +5,11 @@ QFileSystemModelImpl::QFileSystemModelImpl():QFileSystemModel()
 
 }
 
+const QSet<QString> &QFileSystemModelImpl::getSelectedFiles()
+{
+    return elf_Path;
+}
+
 Qt::ItemFlags QFileSystemModelImpl::flags(const QModelIndex &index) const
 {
     return Qt::ItemIsUserCheckable|QFileSystemModel::flags(index);

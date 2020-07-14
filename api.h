@@ -7,9 +7,6 @@
 extern "C" {
 #endif
 
-// 接口C函数原型
-// extern keipm_err_t 接口名(参数...);
-
 typedef struct rootCa_inf{
     const char* Root_Common_name;
     const char* Root_Org_name;
@@ -44,10 +41,10 @@ extern keipm_err_t keipm_set_Key(const char* publicKey_Path,const char* elf_Path
 
 /**
  * @brief 生成私钥
- * @param [in] error 错误结构体
- * @return [out] const char* 私钥文件路径地址名
+ * @param [in] const char* 私钥文件路径地址名
+ * @return [out] error 错误结构体
 */
-extern const char* keipm_create_PrivateKey(keipm_err_t *error);
+extern keipm_err_t keipm_create_PrivateKey(const char *privateKeyPath);
 
 /**
  * @brief 生成公钥
@@ -55,7 +52,7 @@ extern const char* keipm_create_PrivateKey(keipm_err_t *error);
  * @param [in] privateKeyPath 私钥文件路径地址名
  * @return [out] const char* 公钥文件路径地址名
 */
-extern const char* keipm_create_PublicKey(keipm_err_t *error,const char* privateKeyPath);
+extern keipm_err_t keipm_create_PublicKey(const char* publicKeyPath, const char* privateKeyPath);
 
 /**
  * @brief 生成根证书
@@ -63,15 +60,15 @@ extern const char* keipm_create_PublicKey(keipm_err_t *error,const char* private
  * @param [in] rootca 根证书信息结构体
  * @return [out] const char* 根证书文件路径地址名
 */
-extern const char* keipm_create_rootCA(keipm_err_t *error,RootCa rootca);
+extern keipm_err_t keipm_create_rootCA(const char *rootCA_Path, const RootCa *rootca);
 
 /**
  * @brief 生成用户证书
- * @param [in] error 错误结构体
+ * @param [in] const char* 用户证书文件路径地址名
  * @param [in] rootca 用户证书信息结构体
- * @return [out] const char* 用户证书文件路径地址名
+ * @return [out] error 错误结构体
 */
-extern const char* keipm_create_userCA(keipm_err_t *error,UserCa userca);
+extern keipm_err_t keipm_create_userCA(const char *out_cert_path, const UserCa *userca);
 
 
 #ifdef __cplusplus

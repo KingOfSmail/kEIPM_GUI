@@ -23,7 +23,7 @@ void Finish_Close::setFlag(bool value)
     flag = value;
 }
 
-void Finish_Close::set_textContent(const char* str_reason){
+void Finish_Close::set_textContent(const QString& str_reason){
     if(this->flag){
         ui->text_remind->insertPlainText(str_reason);
         ui->Btn_Finish->setText("完成");
