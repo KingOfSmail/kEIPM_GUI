@@ -1,4 +1,5 @@
 #include "widget.h"
+#include <QFileDialog>
 #include "ui_widget.h"
 
 
@@ -8,14 +9,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //设置对应输入框为只读
-    ui->Line_output_RootCA->setReadOnly(true);
-    ui->lineEd_OutPutPath_UserCA->setReadOnly(true);
-
-    ui->lineEd_GetRsa_Greate_privateKey->setReadOnly(true);
-    ui->lineEd_GetRsa_public_Path->setReadOnly(true);
-    ui->lineEd_GetRsa_privaPath->setReadOnly(true);
-    ui->lineEd_GetRsa_publicPath->setReadOnly(true);
+    ui->tabWidget->setCurrentIndex(0);
 
     //构造时remove后三个页面
     if(!ui->Manage_model->checkState()){
@@ -68,18 +62,35 @@ void Widget::on_Manage_model_stateChanged(int arg1)
 
 //End of Widget Page
 
-//Rsa、CA签名页的弹出窗口函数
 
-void Widget::newpage_Of_Finished(Finish_Close *fin,QSet<QString> Total_Elf_Path,QString Path,keipm_err_t (*Sign_elf_)(const char*,const char*)){
+/**
+ * @brief Widget::newpage_Of_Finished
+ * 调用签名API 并显示Rsa、CA签名页的弹出窗口函数
+ * @param Total_Elf_Path
+ * @param Path
+ */
+void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_prikey,const QString &Path,keipm_err_t (*Sign_elf_)(const char*,const char*)){
+    Finish_Close *fin = new Finish_Close(this);
+
     QSet<QString> temp_TotalPath = Total_Elf_Path;
 
     QSet<QString> Success_SignElf;
     keipm_err_t e;
     int count = 0;
+    if(Path.isEmpty()) {
+        fin->setWindowTitle("Defeat");
+        fin->setFlag(false);
+        fin->set_textContent(QString("错误提示：\n未选择%1文件.").arg(is_prikey ? "私钥" : "证书"));
+        fin->exec();
+
+        fin->deleteLater();
+        fin = nullptr;
+        goto eo;
+    }
     if(Total_Elf_Path.isEmpty()){
         fin->setWindowTitle("Defeat");
         fin->setFlag(false);
-        fin->set_textContent("错误提示：\n未选择文件.");
+        fin->set_textContent("错误提示：\n未选择待签名ELF文件.");
         fin->exec();
 
         fin->deleteLater();
@@ -131,7 +142,6 @@ void Widget::newpage_Of_Finished(Finish_Close *fin,QSet<QString> Total_Elf_Path,
         fin->set_textContent(e.reason);
         fin->exec();
 
-        ca_inf.reset_ca_inf();
         fin->deleteLater();
         fin = nullptr;
         return;
@@ -148,7 +158,6 @@ Page_error:
     }
     fin->exec();
 
-    ca_inf.reset_ca_inf();
     fin->deleteLater();
     fin = nullptr;
 
@@ -159,39 +168,26 @@ eo:
 
 //CASign Page
 
+/**
+ * @brief 证书签名按钮
+ */
 void Widget::on_Btn_Inport_clicked()
 {
-    this->ca_inf.setCASign_inport_elf_Path(qfsm_forCASign_Page->elf_Path);
-    Finish_Close *fin = new  Finish_Close(this);
+    const QSet<QString> &Total_Elf_Path = qfsm_forCASign_Page->getSelectedFiles();
 
-    QSet<QString> Total_Elf_Path = ca_inf.getCASign_inport_elf_Path();
-    QString UserCA_Path=ca_inf.getCASign_inport_UserCA_Path();
-
-    newpage_Of_Finished(fin,Total_Elf_Path,UserCA_Path,keipm_set_UserCA);
+    QString CA_path = ui->lineEd_CASign_CA->text();
+    newpage_Of_Finished(Total_Elf_Path,false,CA_path,keipm_set_UserCA);
 }
 
 void Widget::on_Btn_CASign_CA_clicked()
 {
-    Dialog *dialog = new Dialog(this);
-    dialog->setWindowTitle("Choose CA File");
-    if(dialog->exec()){
-        set_Content_lineEd_CASign_CA(dialog);
+    QString userCert_pathname = QFileDialog::getOpenFileName(this,
+                                                               tr("打开证书"),
+                                                               "user.der",
+                                                               tr("DER编码证书(*der)"));
+    if (userCert_pathname.length()) {
+        ui->lineEd_CASign_CA->setText(userCert_pathname);
     }
-}
-
-void Widget::set_Content_lineEd_CASign_CA(Dialog *dialog)
-{
-    if(ui->lineEd_CASign_CA->text().isEmpty()){
-        ca_inf.setCASign_inport_UserCA_Path(dialog->getChoose_path());
-        ui->lineEd_CASign_CA->setText(ca_inf.getCASign_inport_UserCA_Path());
-    }else{
-        ui->lineEd_CASign_CA->selectAll();
-        ui->lineEd_CASign_CA->del();
-        ca_inf.setCASign_inport_UserCA_Path(dialog->getChoose_path());
-        ui->lineEd_CASign_CA->setText(ca_inf.getCASign_inport_UserCA_Path());
-    }
-    dialog->deleteLater();
-    dialog = nullptr;
 }
 
 void Widget::on_Btn_Cancel_clicked()
@@ -199,21 +195,15 @@ void Widget::on_Btn_Cancel_clicked()
     this->close();
 }
 
-void Widget::on_lineEd_CASign_CA_editingFinished()
-{
-    this->ca_inf.setCASign_inport_UserCA_Path(ui->lineEd_CASign_CA->text());
-}
-
+/**
+ * @brief RSA签名按钮
+ */
 void Widget::on_Btn_RsaSign_Inport_clicked()
 {
-    this->ca_inf.setRsaSign_inport_elf_Path(qfsm_forRsaSign_Page->elf_Path);
+    const QSet<QString> &Total_Elf_Path = qfsm_forRsaSign_Page->getSelectedFiles();
 
-    Finish_Close *fin = new  Finish_Close(this);
-    QSet<QString> Total_Elf_Path = ca_inf.getRsaSign_inport_elf_Path();
-    QString Public_Key = ca_inf.getRsaSign_inport_PublicKey_Path();
-
-    newpage_Of_Finished(fin,Total_Elf_Path,Public_Key,keipm_set_Key);
-
+    QString Public_Key = ui->lineEd_RsaSign_rsa->text();
+    newpage_Of_Finished(Total_Elf_Path,true,Public_Key,keipm_set_Key);
 }
 
 // End of CASign Page
@@ -223,30 +213,13 @@ void Widget::on_Btn_RsaSign_Inport_clicked()
 
 void Widget::on_Btn_RsaSign_rsa_clicked()
 {
-    Dialog* dialog = new Dialog(this);
-    dialog->setWindowTitle("Choose RSA File");
-    if(dialog->exec()){
-        set_Content_lineEd_RsaSign_rsa(dialog);
+    QString prikey_pathname = QFileDialog::getOpenFileName(this,
+                                                           tr("打开RSA私钥"),
+                                                           "private_pkcs1.pem",
+                                                           tr("PEM私钥(*pem)"));
+    if (prikey_pathname.length()) {
+        ui->lineEd_RsaSign_rsa->setText(prikey_pathname);
     }
-}
-
-void Widget::set_Content_lineEd_RsaSign_rsa(Dialog* dialog){
-    if(ui->lineEd_RsaSign_rsa->text().isEmpty()){
-        ca_inf.setRsaSign_inport_PublicKey_Path(dialog->getChoose_path());
-        ui->lineEd_RsaSign_rsa->setText(ca_inf.getRsaSign_inport_PublicKey_Path());
-    }else{
-        ui->lineEd_RsaSign_rsa->selectAll();
-        ui->lineEd_RsaSign_rsa->del();
-        ca_inf.setRsaSign_inport_PublicKey_Path(dialog->getChoose_path());
-        ui->lineEd_RsaSign_rsa->setText(ca_inf.getRsaSign_inport_PublicKey_Path());
-    }
-    dialog->deleteLater();
-    dialog = nullptr;
-}
-
-void Widget::on_lineEd_RsaSign_rsa_editingFinished()
-{
-    this->ca_inf.setRsaSign_inport_PublicKey_Path(ui->lineEd_RsaSign_rsa->text());
 }
 
 void Widget::on_Btn_Rsa_Sign_Cancel_clicked()
@@ -261,126 +234,106 @@ void Widget::on_Btn_Rsa_Sign_Cancel_clicked()
 
 void Widget::on_Btn_GetRsa_publicKey_clicked()
 {
-    Dialog* dialog = new Dialog(this);
-    dialog->setWindowTitle("Choose RSA PrivateKey");
-    if(dialog->exec()){
-        set_Content_lineEd_GetRsa_inport_public_privateKey(dialog);
-
+    QString pubkey_path = QFileDialog::getOpenFileName(this,
+                                                       tr("打开公钥"),
+                                                       "public_pkcs1.pem",
+                                                       tr("PEM公钥(*pem)"));
+    if (pubkey_path.length()) {
+        ui->lineEd_GetRsa_inport_public_privateKey->setText(pubkey_path);
     }
-}
-
-void Widget::set_Content_lineEd_GetRsa_inport_public_privateKey(Dialog* dialog){
-    if(ui->lineEd_GetRsa_inport_public_privateKey->text().isEmpty()){
-        ca_inf.setCreateRsa_inport_PrivsteKey_path(dialog->getChoose_path());
-        ui->lineEd_GetRsa_inport_public_privateKey->setText(ca_inf.getCreateRsa_inport_PrivsteKey_path());
-    }else{
-        ui->lineEd_GetRsa_inport_public_privateKey->selectAll();
-        ui->lineEd_GetRsa_inport_public_privateKey->del();
-        ca_inf.setCreateRsa_inport_PrivsteKey_path(dialog->getChoose_path());
-        ui->lineEd_GetRsa_inport_public_privateKey->setText(ca_inf.getCreateRsa_inport_PrivsteKey_path());
-    }
-    dialog->deleteLater();
-    dialog = nullptr;
 }
 
 void Widget::on_Btn_GetRsa_Create_privateKey_clicked()
 {
     keipm_err_t error;
-    QString str_private_path = QString(keipm_create_PrivateKey(&error));
-    Finish_Close* fin = new Finish_Close(this);
-    ca_inf.setCreateRsa_Private_Key_Path(str_private_path);
+    QString str_private_path = QFileDialog::getSaveFileName(this,
+                                                             tr("选择私钥保存位置"),
+                                                             "private_pkcs1.pem",
+                                                             tr("PEM私钥(*pem)"));
+    if (str_private_path.isEmpty()) {
+        return;
+    }
+    QByteArray bv_str_private_path = str_private_path.toUtf8();
+
+    error = keipm_create_PrivateKey(bv_str_private_path.data());
+
     if(!error.errno){
-
-        if(ui->lineEd_GetRsa_Greate_privateKey->text().isEmpty()){
-            ui->lineEd_GetRsa_Greate_privateKey->setText(ca_inf.getCreateRsa_Private_Key_Path());
-        }else{
-            ui->lineEd_GetRsa_Greate_privateKey->selectAll();
-            ui->lineEd_GetRsa_Greate_privateKey->del();
-            ui->lineEd_GetRsa_Greate_privateKey->setText(ca_inf.getCreateRsa_Private_Key_Path());
-        }
-
-        ca_inf.setCreateRsa_Private_Key_Path(str_private_path);
         copy_privateKey_To_CreatePublicKey(str_private_path);
     }else{
-        if(!ui->lineEd_GetRsa_Greate_privateKey->text().isEmpty()){
-            ui->lineEd_GetRsa_Greate_privateKey->selectAll();
-            ui->lineEd_GetRsa_Greate_privateKey->del();
-            QString s = QString("");
-            copy_privateKey_To_CreatePublicKey(s);
-        }
+        copy_privateKey_To_CreatePublicKey("");
     }
 
-    remindPage(fin,error);
+    remindPage(error);
 }
 
+/**
+ * @brief 导入私钥以生成公钥按钮
+ */
 void Widget::on_Btn_GetRsa_Create_publicKey_clicked()
 {
     keipm_err_t error;
-    QByteArray ba = ca_inf.getCreateRsa_Private_Key_Path().toUtf8();
-    const char* private_key_path = ba.data();
-    QString str_public_path = QString(keipm_create_PublicKey(&error,private_key_path));
-    Finish_Close* fin = new Finish_Close(this);
-    ca_inf.setCreateRsa_Public_Key_Path(str_public_path);
-    if(!error.errno){
+    QByteArray ba = ui->lineEd_GetRsa_inport_public_privateKey->text().toUtf8();
+    const char *private_key_path = ba.data();
 
-        if(ui->lineEd_GetRsa_public_Path->text().isEmpty()){
-            ui->lineEd_GetRsa_public_Path->setText(ca_inf.getCreateRsa_Public_Key_Path());
-        }else{
-            ui->lineEd_GetRsa_public_Path->selectAll();
-            ui->lineEd_GetRsa_public_Path->del();
-            ui->lineEd_GetRsa_public_Path->setText(ca_inf.getCreateRsa_Public_Key_Path());
-        }
-
-    }else{
-        if(!ui->lineEd_GetRsa_public_Path->text().isEmpty()){
-            ui->lineEd_GetRsa_public_Path->selectAll();
-            ui->lineEd_GetRsa_public_Path->del();
-        }
+    if (ba.isEmpty()) {
+        remindPage(ERROR(kEIPM_ERR_INVALID, "未选择私钥文件"));
+        return;
     }
 
-    remindPage(fin,error);
+    QString str_public_path = QFileDialog::getSaveFileName(this,
+                                                           tr("选择公钥保存位置"),
+                                                           "public_pkcs1.pem",
+                                                           tr("PEM公钥(*pem)"));
+    // If user has pushed cancel button
+    if (str_public_path.isEmpty()) {
+        return;
+    }
+
+    QByteArray ba_str_public_path = str_public_path.toUtf8();    
+    const char *public_key_path = ba_str_public_path.data();
+
+    error = keipm_create_PublicKey(public_key_path, private_key_path);
+    remindPage(error);
 }
 
 void Widget::on_Btn_GetRsa_Create_clicked()
 {
-    keipm_err_t error_private,error_public;
-    QString private_path = QString(keipm_create_PrivateKey(&error_private));
-    QByteArray ba = private_path.toUtf8();
-    const char* privateKey_path = ba.data();
-    QString public_path = QString(keipm_create_PublicKey(&error_public,privateKey_path));
-    Finish_Close *fin = new Finish_Close(this);
-    ca_inf.setCreateRsa_Private_Key_Path(private_path);
-    ca_inf.setCreateRsa_Public_Key_Path(public_path);
+    keipm_err_t error;
+    QString private_path = QFileDialog::getSaveFileName(this,
+                                                        tr("选择私钥保存位置"),
+                                                        "private_pkcs1.pem",
+                                                        tr("PEM私钥(*pem)"));
+    // If user has pushed cancel button
+    if (private_path.isEmpty()) {
+        return;
+    }
+    QByteArray ba_private_path = private_path.toUtf8();
+    const char* privateKey_path = ba_private_path.data();
 
-    if(!error_private.errno){
-      if(ui->lineEd_GetRsa_privaPath->text().isEmpty()){
-          ui->lineEd_GetRsa_privaPath->setText(ca_inf.getCreateRsa_Private_Key_Path());
-      }else{
-          ui->lineEd_GetRsa_privaPath->selectAll();
-          ui->lineEd_GetRsa_privaPath->del();
-          ui->lineEd_GetRsa_privaPath->setText(ca_inf.getCreateRsa_Private_Key_Path());
-      }
+    error = keipm_create_PrivateKey(privateKey_path);
+
+    if(!error.errno){
+        copy_privateKey_To_CreatePublicKey(private_path);
     }else{
-        if(!ui->lineEd_GetRsa_privaPath->text().isEmpty()){
-            ui->lineEd_GetRsa_privaPath->selectAll();
-            ui->lineEd_GetRsa_privaPath->del();
-        }
+        remindPage(error);
+        // It makes no sense to continue
+        return;
     }
-    if(!error_public.errno){
-        if(ui->lineEd_GetRsa_publicPath->text().isEmpty()){
-            ui->lineEd_GetRsa_publicPath->setText(ca_inf.getCreateRsa_Public_Key_Path());
-        }else{
-            ui->lineEd_GetRsa_publicPath->selectAll();
-            ui->lineEd_GetRsa_publicPath->del();
-            ui->lineEd_GetRsa_publicPath->setText(ca_inf.getCreateRsa_Public_Key_Path());
-        }
-    }else{
-        if(!ui->lineEd_GetRsa_publicPath->text().isEmpty()){
-            ui->lineEd_GetRsa_publicPath->selectAll();
-            ui->lineEd_GetRsa_publicPath->del();
-        }
+
+    QString public_path = QFileDialog::getSaveFileName(this,
+                                                       tr("选择公钥保存位置"),
+                                                       "private_pkcs1.pem",
+                                                       tr("PEM公钥(*pem)"));
+    // If user has pushed cancel button
+    if (public_path.isEmpty()) {
+        return;
     }
-    remindPage(fin,error_private,error_public);
+    QByteArray ba_public_path = public_path.toUtf8();
+    const char *publicKey_path = ba_public_path.data();
+
+    error = keipm_create_PublicKey(publicKey_path, privateKey_path);
+
+    remindPage(error);
 }
 
 void Widget::on_Btn_GetRsa_Cancel_clicked()
@@ -388,18 +341,9 @@ void Widget::on_Btn_GetRsa_Cancel_clicked()
     this->close();
 }
 
-void Widget::copy_privateKey_To_CreatePublicKey(QString privateKey_path)
+void Widget::copy_privateKey_To_CreatePublicKey(const QString &privateKey_path)
 {
-    ca_inf.setCreateRsa_inport_PrivsteKey_path(privateKey_path);
-
-    if(ui->lineEd_GetRsa_inport_public_privateKey->text().isEmpty()){
-        ui->lineEd_GetRsa_inport_public_privateKey->setText(ca_inf.getCreateRsa_inport_PrivsteKey_path());
-    }else{
-        ui->lineEd_GetRsa_inport_public_privateKey->selectAll();
-        ui->lineEd_GetRsa_inport_public_privateKey->del();
-        ui->lineEd_GetRsa_inport_public_privateKey->setText(ca_inf.getCreateRsa_inport_PrivsteKey_path());
-    }
-
+    ui->lineEd_GetRsa_inport_public_privateKey->setText(privateKey_path);
 }
 
 //End of Creat Rsa Page
@@ -408,88 +352,80 @@ void Widget::copy_privateKey_To_CreatePublicKey(QString privateKey_path)
 //Create_UserCA Page
 void Widget::on_Btn_User_Visit_RootCA_clicked()
 {
-    Dialog* dialog = new Dialog(this);
-    dialog->setWindowTitle("Choose RSA File");
-    if(dialog->exec()){
-        set_Content_lineEd_User_InputPath_RootCA(dialog);
+    QString rootCA_pathname = QFileDialog::getOpenFileName(this,
+                                                           tr("打开CA根证书"),
+                                                           "root_ca.der",
+                                                           tr("DER编码证书(*der)"));
+
+    if (rootCA_pathname.length()) {
+        ui->lineEd_User_InputPath_RootCA->setText(rootCA_pathname);
     }
 }
 
-void Widget::set_Content_lineEd_User_InputPath_RootCA(Dialog* dialog){
-    if(ui->lineEd_User_InputPath_RootCA->text().isEmpty()){
-        ca_inf.setUser_input_RootCA_Path(dialog->getChoose_path());
-        ui->lineEd_User_InputPath_RootCA->setText(ca_inf.getUser_input_RootCA_Path());
-    }else{
-        ui->lineEd_User_InputPath_RootCA->selectAll();
-        ui->lineEd_User_InputPath_RootCA->del();
-        ca_inf.setUser_input_RootCA_Path(dialog->getChoose_path());
-        ui->lineEd_User_InputPath_RootCA->setText(ca_inf.getUser_input_RootCA_Path());
+static keipm_err_t checkCertInfo(
+        const QString &User_Local,
+        const QString &User_State,
+        const QString &User_Country,
+        const QString &User_Org_name,
+        const QString &User_Common_name)
+{
+    if (User_Local.isEmpty() || User_State.isEmpty() || User_Country.isEmpty()
+            || User_Org_name.isEmpty() || User_Common_name.isEmpty()) {
+        return ERROR(kEIPM_ERR_INVALID, "证书有字段为空，请检查");
     }
-    dialog->deleteLater();
-    dialog = nullptr;
-}
-
-void Widget::on_lineEd_UserCountry_editingFinished()
-{
-    this->ca_inf.setUser_Country(ui->lineEd_UserCountry->text());
-}
-
-void Widget::on_lineEd_UserState_editingFinished()
-{
-    this->ca_inf.setUser_State(ui->lineEd_UserState->text());
-}
-
-void Widget::on_lineEd_UserLocality_editingFinished()
-{
-    this->ca_inf.setUser_Local(ui->lineEd_UserLocality->text());
-}
-
-void Widget::on_lineEd_UserOrganization_editingFinished()
-{
-    this->ca_inf.setUser_Org_name(ui->lineEd_UserOrganization->text());
-}
-
-void Widget::on_lineEd_UserCommon_editingFinished()
-{
-    this->ca_inf.setUser_Common_name(ui->lineEd_UserCommon->text());
+    if (User_Country.length() != 2) {
+        return ERROR(kEIPM_ERR_INVALID, "“所在国家 C”字段必须为2个字节");
+    }
+    return ERROR(kEIPM_OK, NULL);
 }
 
 void Widget::on_pushButton_2_clicked()
 {
-    const char* User_output_CA_path;
     keipm_err_t error;
     UserCa userca;
-    Finish_Close *fin = new Finish_Close(this);
 
-    QByteArray ba = ca_inf.getUser_Local().toUtf8();
+    QByteArray ba = ui->lineEd_UserLocality->text().toUtf8();
     userca.User_Local = ba.data();
 
-    QByteArray ba1 = ca_inf.getUser_State().toUtf8();
+    QByteArray ba1 = ui->lineEd_UserState->text().toUtf8();
     userca.User_State = ba1.data();
 
-    QByteArray ba2 = ca_inf.getUser_Country().toUtf8();
+    QByteArray ba2 = ui->lineEd_UserCountry->text().toUtf8();
     userca.User_Country = ba2.data();
 
-    QByteArray ba3 = ca_inf.getUser_Org_name().toUtf8();
+    QByteArray ba3 = ui->lineEd_UserOrganization->text().toUtf8();
     userca.User_Org_name = ba3.data();
 
-    QByteArray ba4 = ca_inf.getUser_Common_name().toUtf8();
+    QByteArray ba4 = ui->lineEd_UserCommon->text().toUtf8();
     userca.User_Common_name = ba4.data();
 
-    QByteArray ba5 = ca_inf.getUser_input_RootCA_Path().toUtf8();
+    QByteArray ba5 = ui->lineEd_User_InputPath_RootCA->text().toUtf8();
     userca.User_input_RootCA_Path = ba5.data();
 
-    User_output_CA_path = keipm_create_userCA(&error,userca);
-
-    if(!error.errno){
-        ui->lineEd_OutPutPath_UserCA->setText(User_output_CA_path);
-        QString s = QString(User_output_CA_path);
-        ca_inf.setRoot_outPut_CA_Path(s);
-    }else{
-        ui->lineEd_OutPutPath_UserCA->selectAll();
-        ui->lineEd_OutPutPath_UserCA->del();
+    if (ba5.isEmpty()) {
+        remindPage(ERROR(kEIPM_ERR_INVALID, "未选择根证书文件"));
+        return;
     }
-    remindPage(fin,error);
+
+    error = checkCertInfo(userca.User_Local, userca.User_State, userca.User_Country,
+                          userca.User_Org_name, userca.User_Common_name);
+    if (error.errno != kEIPM_OK) {
+        remindPage(error);
+        return;
+    }
+
+    QString userCert_pathname = QFileDialog::getSaveFileName(this,
+                                                           tr("保存用户证书"),
+                                                           "user.der",
+                                                           tr("DER编码证书(*der)"));
+    if (userCert_pathname.isEmpty()) {
+        return;
+    }
+    QByteArray ba6 = userCert_pathname.toUtf8();
+
+    error = keipm_create_userCA(ba6.data(), &userca);
+
+    remindPage(error);
 
 }
 
@@ -503,65 +439,45 @@ void Widget::on_pushButton_clicked()
 
 //Create_RootCA Page
 
-void Widget::on_lineEd_RootCountry_editingFinished()
-{
-    this->ca_inf.setRoot_Country(ui->lineEd_RootCountry->text());
-}
-
-void Widget::on_lineEd_RootState_editingFinished()
-{
-    this->ca_inf.setRoot_State(ui->lineEd_RootState->text());
-}
-
-void Widget::on_lineEd_RootLocality_editingFinished()
-{
-    this->ca_inf.setRoot_Local(ui->lineEd_RootLocality->text());
-}
-
-void Widget::on_lineEd_RootOrganization_editingFinished()
-{
-    this->ca_inf.setRoot_Org_name(ui->lineEd_RootOrganization->text());
-}
-
-void Widget::on_lineEd_RootCommon_editingFinished()
-{
-    this->ca_inf.setRoot_Common_name(ui->lineEd_RootCommon->text());
-}
-
 void Widget::on_Btn_output_RootCA_clicked()
 {
-    const char* Root_outPut_CA_Path;
     keipm_err_t error;
     rootCa_inf Root_CA;
-    Finish_Close* fin =new Finish_Close(this);
 
-    QByteArray ba = ca_inf.getRoot_Local().toUtf8();
+    QByteArray ba = ui->lineEd_RootLocality->text().toUtf8();
     Root_CA.Root_Local = ba.data();
 
-    QByteArray ba1 = ca_inf.getRoot_State().toUtf8();
+    QByteArray ba1 = ui->lineEd_RootState->text().toUtf8();
     Root_CA.Root_State = ba1.data();
 
-    QByteArray ba2 = ca_inf.getRoot_Country().toUtf8();
+    QByteArray ba2 = ui->lineEd_RootCountry->text().toUtf8();
     Root_CA.Root_Country = ba2.data();
 
-    QByteArray ba3 = ca_inf.getRoot_Org_name().toUtf8();
+    QByteArray ba3 = ui->lineEd_RootOrganization->text().toUtf8();
     Root_CA.Root_Org_name = ba3.data();
 
-    QByteArray ba4 = ca_inf.getRoot_Common_name().toUtf8();
+    QByteArray ba4 = ui->lineEd_RootCommon->text().toUtf8();
     Root_CA.Root_Common_name = ba.data();
 
-    Root_outPut_CA_Path = keipm_create_rootCA(&error,Root_CA);
-
-
-    if(!error.errno){
-        ui->Line_output_RootCA->setText(Root_outPut_CA_Path);
-        QString s = QString(Root_outPut_CA_Path);
-        ca_inf.setRoot_outPut_CA_Path(s);
-    }else{
-        ui->Line_output_RootCA->selectAll();
-        ui->Line_output_RootCA->del();
+    error = checkCertInfo(Root_CA.Root_Local, Root_CA.Root_State, Root_CA.Root_Country,
+                          Root_CA.Root_Org_name, Root_CA.Root_Common_name);
+    if (error.errno != kEIPM_OK) {
+        remindPage(error);
+        return;
     }
-    remindPage(fin,error);
+
+    QString rootCA_pathname = QFileDialog::getSaveFileName(this,
+                                                           tr("保存CA根证书"),
+                                                           "root_ca.der",
+                                                           tr("DER编码证书(*der)"));
+    if (rootCA_pathname.isEmpty()) {
+        return;
+    }
+
+    QByteArray ba5 = rootCA_pathname.toUtf8();
+
+    error = keipm_create_rootCA(ba5.data(), &Root_CA);
+    remindPage(error);
 }
 
 void Widget::on_Btn_outClose_RootCA_clicked()
@@ -576,8 +492,9 @@ void Widget::on_Btn_outClose_RootCA_clicked()
 
 //点击导入后的弹窗窗口，重载函数为一键导入的弹窗
 
-void Widget::remindPage(Finish_Close *fin, keipm_err_t error)
+void Widget::remindPage(keipm_err_t error)
 {
+    Finish_Close* fin = new Finish_Close(this);
     if(error.errno){
         fin->setWindowTitle("Defeat");
         fin->setFlag(false);
@@ -585,9 +502,6 @@ void Widget::remindPage(Finish_Close *fin, keipm_err_t error)
         fin->set_textContent(error.reason);
         fin->exec();
 
-
-
-        ca_inf.reset_ca_inf();
         fin->deleteLater();
         fin = nullptr;
     }else{
@@ -596,36 +510,6 @@ void Widget::remindPage(Finish_Close *fin, keipm_err_t error)
         fin->set_textContent(error.reason);
         fin->exec();
 
-
-
-        ca_inf.reset_ca_inf();
-        fin->deleteLater();
-        fin = nullptr;
-    }
-}
-
-void Widget::remindPage(Finish_Close *fin, keipm_err_t error_priv, keipm_err_t error_pub)
-{
-    if((!error_priv.errno)&&(!error_pub.errno)){
-        fin->setWindowTitle("Finish");
-        fin->setFlag(true);
-        fin->set_textContent(error_priv.reason);
-        fin->set_textContent("\n");
-        fin->set_textContent(error_pub.reason);
-        fin->exec();
-
-        ca_inf.reset_ca_inf();
-        fin->deleteLater();
-        fin = nullptr;
-    }else{
-        fin->setWindowTitle("Defeat");
-        fin->setFlag(false);
-        fin->set_textContent(error_priv.reason);
-        fin->set_textContent("\n");
-        fin->set_textContent(error_pub.reason);
-        fin->exec();
-
-        ca_inf.reset_ca_inf();
         fin->deleteLater();
         fin = nullptr;
     }

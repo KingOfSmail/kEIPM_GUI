@@ -22,18 +22,30 @@
   <layout class="QVBoxLayout" name="verticalLayout_9">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
+     </property>
+     <property name="elideMode">
+      <enum>Qt::ElideNone</enum>
+     </property>
+     <property name="movable">
+      <bool>true</bool>
      </property>
      <widget class="QWidget" name="RsaSign">
       <attribute name="title">
-       <string>公私钥签名</string>
+       <string>私钥签名</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>导入需要签名的elf文件以及公钥密匙:</string>
+          <string>导入私钥密匙以签名ELF文件:</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -42,7 +54,7 @@
              <item>
               <widget class="QLabel" name="lab_RsaSign_rsa">
                <property name="text">
-                <string>公钥:</string>
+                <string>私钥:</string>
                </property>
                <property name="buddy">
                 <cstring>lineEd_RsaSign_rsa</cstring>
@@ -68,7 +80,7 @@
              <item>
               <widget class="QLabel" name="lab_RsaSign_elf">
                <property name="text">
-                <string>elf文件:</string>
+                <string>ELF文件:</string>
                </property>
                <property name="buddy">
                 <cstring>treeView_RsaSign_elf</cstring>
@@ -109,7 +121,7 @@
           <item>
            <widget class="QPushButton" name="Btn_RsaSign_Inport">
             <property name="text">
-             <string>导入</string>
+             <string>签名</string>
             </property>
            </widget>
           </item>
@@ -139,7 +151,7 @@
           </size>
          </property>
          <property name="title">
-          <string>导入需要签名的elf和证书文件:</string>
+          <string>导入证书以签名ELF文件:</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
@@ -174,7 +186,7 @@
              <item>
               <widget class="QLabel" name="lab_CASign_elf">
                <property name="text">
-                <string>elf文件:</string>
+                <string>ELF文件:</string>
                </property>
                <property name="buddy">
                 <cstring>treeView_CASign_elf</cstring>
@@ -228,7 +240,7 @@
           <item>
            <widget class="QPushButton" name="Btn_Inport">
             <property name="text">
-             <string>导入</string>
+             <string>签名</string>
             </property>
            </widget>
           </item>
@@ -248,22 +260,19 @@
       <attribute name="title">
        <string>生成公私钥</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_8">
+      <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,1">
        <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string>生成私钥</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0">
           <item>
-           <widget class="QLabel" name="lab_GetRsa_Create_privateKey">
+           <widget class="QLabel" name="label">
             <property name="text">
-             <string>私钥地址:</string>
+             <string/>
             </property>
            </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEd_GetRsa_Greate_privateKey"/>
           </item>
           <item>
            <widget class="QPushButton" name="Btn_GetRsa_Create_privateKey">
@@ -281,6 +290,9 @@
           <string>导入私钥以生成公钥</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
+          <property name="topMargin">
+           <number>11</number>
+          </property>
           <item row="0" column="1">
            <widget class="QLineEdit" name="lineEd_GetRsa_inport_public_privateKey"/>
           </item>
@@ -297,16 +309,6 @@
              <string>浏览</string>
             </property>
            </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="lab_GetRsa_publicKey_Path">
-            <property name="text">
-             <string>公钥地址:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEd_GetRsa_public_Path"/>
           </item>
           <item row="1" column="2">
            <widget class="QPushButton" name="Btn_GetRsa_Create_publicKey">
@@ -326,34 +328,12 @@
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <widget class="QWidget" name="widget_6" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <widget class="QLabel" name="lab_GetRsa_privaPath">
-               <property name="text">
-                <string>私钥地址:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEd_GetRsa_privaPath"/>
-             </item>
-            </layout>
+            <layout class="QHBoxLayout" name="horizontalLayout_13"/>
            </widget>
           </item>
           <item>
            <widget class="QWidget" name="widget_7" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_17">
-             <item>
-              <widget class="QLabel" name="lab_GetRsa_publicPath">
-               <property name="text">
-                <string>公钥地址:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEd_GetRsa_publicPath"/>
-             </item>
-            </layout>
+            <layout class="QHBoxLayout" name="horizontalLayout_17"/>
            </widget>
           </item>
           <item>
@@ -438,7 +418,11 @@
          </property>
          <layout class="QFormLayout" name="formLayout_2">
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEd_UserCountry"/>
+           <widget class="QLineEdit" name="lineEd_UserCountry">
+            <property name="placeholderText">
+             <string>Country Name (2 letter code)</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="lab_UserState">
@@ -451,7 +435,11 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEd_UserState"/>
+           <widget class="QLineEdit" name="lineEd_UserState">
+            <property name="placeholderText">
+             <string>State or Province Name (full name)</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="lab_UserLocality">
@@ -464,7 +452,11 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEd_UserLocality"/>
+           <widget class="QLineEdit" name="lineEd_UserLocality">
+            <property name="placeholderText">
+             <string>Locality Name (eg, city)</string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="lab_UserOrganiz">
@@ -477,7 +469,11 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEd_UserOrganization"/>
+           <widget class="QLineEdit" name="lineEd_UserOrganization">
+            <property name="placeholderText">
+             <string>Organization Name (eg, company)</string>
+            </property>
+           </widget>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="lab_UserCommon">
@@ -490,7 +486,11 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEd_UserCommon"/>
+           <widget class="QLineEdit" name="lineEd_UserCommon">
+            <property name="placeholderText">
+             <string>Common Name (e.g. server FQDN or YOUR name)</string>
+            </property>
+           </widget>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="lab_UserCountry">
@@ -501,31 +501,6 @@
              <cstring>lineEd_UserCountry</cstring>
             </property>
            </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame_4">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QLabel" name="lab_Output_UserCA">
-            <property name="text">
-             <string>生成用户证书地址:</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEd_OutPutPath_UserCA</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEd_OutPutPath_UserCA"/>
           </item>
          </layout>
         </widget>
@@ -589,7 +564,11 @@
          </property>
          <layout class="QFormLayout" name="formLayout_3">
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEd_RootCountry"/>
+           <widget class="QLineEdit" name="lineEd_RootCountry">
+            <property name="placeholderText">
+             <string>Country Name (2 letter code)</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="lab_RootState">
@@ -602,7 +581,11 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEd_RootState"/>
+           <widget class="QLineEdit" name="lineEd_RootState">
+            <property name="placeholderText">
+             <string>State or Province Name (full name)</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="lab_RootLocality">
@@ -615,7 +598,11 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEd_RootLocality"/>
+           <widget class="QLineEdit" name="lineEd_RootLocality">
+            <property name="placeholderText">
+             <string>Locality Name (eg, city)</string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="lab_RootOrganiz">
@@ -628,7 +615,11 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEd_RootOrganization"/>
+           <widget class="QLineEdit" name="lineEd_RootOrganization">
+            <property name="placeholderText">
+             <string>Organization Name (eg, company)</string>
+            </property>
+           </widget>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="lab_RootCommon">
@@ -641,7 +632,11 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEd_RootCommon"/>
+           <widget class="QLineEdit" name="lineEd_RootCommon">
+            <property name="placeholderText">
+             <string>Common Name (e.g. server FQDN or YOUR name)</string>
+            </property>
+           </widget>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="lab_RootCountry">
@@ -652,37 +647,6 @@
              <cstring>lineEd_UserCountry</cstring>
             </property>
            </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="lab_RootCA">
-            <property name="text">
-             <string>生成根证书地址:</string>
-            </property>
-            <property name="buddy">
-             <cstring>Line_output_RootCA</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="Line_output_RootCA"/>
           </item>
          </layout>
         </widget>
@@ -757,12 +721,17 @@
         <property name="text">
          <string>管理员模式</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
+  <zorder>widget_5</zorder>
+  <zorder>tabWidget</zorder>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
@@ -784,7 +753,6 @@
   <tabstop>lineEd_UserLocality</tabstop>
   <tabstop>lineEd_UserOrganization</tabstop>
   <tabstop>lineEd_UserCommon</tabstop>
-  <tabstop>lineEd_OutPutPath_UserCA</tabstop>
   <tabstop>pushButton_2</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>lineEd_RootCountry</tabstop>
@@ -792,7 +760,6 @@
   <tabstop>lineEd_RootLocality</tabstop>
   <tabstop>lineEd_RootOrganization</tabstop>
   <tabstop>lineEd_RootCommon</tabstop>
-  <tabstop>Line_output_RootCA</tabstop>
   <tabstop>Btn_output_RootCA</tabstop>
   <tabstop>Btn_outClose_RootCA</tabstop>
  </tabstops>
@@ -805,8 +772,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>421</x>
-     <y>399</y>
+     <x>473</x>
+     <y>470</y>
     </hint>
     <hint type="destinationlabel">
      <x>240</x>

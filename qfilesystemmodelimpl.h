@@ -10,10 +10,13 @@ class QFileSystemModelImpl : public QFileSystemModel
 public:
     QFileSystemModelImpl();
 
+    const QSet<QString> &getSelectedFiles();
 
+private:
     int columnCount(const QModelIndex &parent) const
     {
-            return 1;
+        (void)parent;
+        return 1;
     }
 
 

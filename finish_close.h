@@ -17,7 +17,7 @@ public:
 
     bool getFlag() const;
     void setFlag(bool value);
-    void set_textContent(const char* str_reason);
+    void set_textContent(const QString &str_reason);
 
     bool close_flag;
 private slots:

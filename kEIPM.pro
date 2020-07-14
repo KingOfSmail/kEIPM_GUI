@@ -19,8 +19,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ca_inf.cpp \
-    dialog.cpp \
     finish_close.cpp \
     main.cpp \
     qfilesystemmodelimpl.cpp \
@@ -28,8 +26,6 @@ SOURCES += \
     api_stubs.c
 
 HEADERS += \
-    ca_inf.h \
-    dialog.h \
     finish_close.h \
     qfilesystemmodelimpl.h \
     widget.h \
@@ -37,7 +33,6 @@ HEADERS += \
     errors.h
 
 FORMS += \
-    dialog.ui \
     finish_close.ui \
     widget.ui
 

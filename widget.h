@@ -3,11 +3,9 @@
 
 #include <QWidget>
 #include <QTabBar>
-#include<QTextCodec>
+#include <QTextCodec>
 
 #include "qfilesystemmodelimpl.h"
-#include "ca_inf.h"
-#include "dialog.h"
 #include "finish_close.h"
 #include "api.h"
 #include "errors.h"
@@ -25,29 +23,13 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
-    void newpage_Of_Finished(Finish_Close*,QSet<QString>,QString,keipm_err_t (*Sign_elf_)(const char*,const char*));
+    void newpage_Of_Finished(const QSet<QString> &,bool,const QString &,keipm_err_t (*Sign_elf_)(const char*,const char*));
 
 private slots:
-    void on_lineEd_RootCountry_editingFinished();
-
-    void on_lineEd_RootState_editingFinished();
-
-    void on_lineEd_RootLocality_editingFinished();
-
-    void on_lineEd_RootOrganization_editingFinished();
 
     void on_Btn_Inport_clicked();
 
-    void set_Content_lineEd_CASign_CA(Dialog* dialog);
-    void set_Content_lineEd_RsaSign_rsa(Dialog* dialog);
-    void set_Content_lineEd_GetRsa_inport_public_privateKey(Dialog* dialog);
-    void set_Content_lineEd_User_InputPath_RootCA(Dialog* dialog);
-
     void on_Btn_CASign_CA_clicked();
-
-    void on_lineEd_CASign_CA_editingFinished();
-
-    void on_lineEd_RootCommon_editingFinished();
 
     void on_Btn_RsaSign_rsa_clicked();
 
@@ -65,24 +47,11 @@ private slots:
 
     void on_Btn_User_Visit_RootCA_clicked();
 
-    void on_lineEd_UserCountry_editingFinished();
-
-    void on_lineEd_UserState_editingFinished();
-
-    void on_lineEd_UserLocality_editingFinished();
-
-    void on_lineEd_UserOrganization_editingFinished();
-
-    void on_lineEd_UserCommon_editingFinished();
-
     void on_Btn_RsaSign_Inport_clicked();
-
-    void on_lineEd_RsaSign_rsa_editingFinished();
-
 
     void on_Btn_GetRsa_publicKey_clicked();
 
-    void copy_privateKey_To_CreatePublicKey(QString);
+    void copy_privateKey_To_CreatePublicKey(const QString &);
 
     void on_Btn_GetRsa_Create_privateKey_clicked();
 
@@ -96,12 +65,10 @@ private slots:
 
 private:
     Ui::Widget *ui;
-    CA_inf ca_inf;
     QFileSystemModelImpl *qfsm_forRsaSign_Page,*qfsm_forCASign_Page;
     QWidget *page[3];
 
-    void remindPage(Finish_Close* fin,keipm_err_t error);
-    void remindPage(Finish_Close* fin,keipm_err_t error_priv,keipm_err_t error_pub);
+    void remindPage(keipm_err_t error);
     void QstrToChar(QByteArray* ba,QString str,const char* char_str);
 };
 #endif // WIDGET_H
