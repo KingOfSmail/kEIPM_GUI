@@ -11,6 +11,7 @@ Widget::Widget(QWidget *parent)
 
     ui->tabWidget->setCurrentIndex(0);
 
+    /*
     //构造时remove后三个页面
     if(!ui->Manage_model->checkState()){
         page[2] = ui->tabWidget->widget(4);
@@ -20,6 +21,17 @@ Widget::Widget(QWidget *parent)
         page[0] = ui->tabWidget->widget(2);
         ui->tabWidget->removeTab(2);
     }
+    */
+
+    QWidget* page1,*page2;
+    page1 = ui->tabWidget->widget(4);
+    page2 = ui->tabWidget->widget(3);
+    ui->tabWidget->removeTab(4);
+    ui->tabWidget->removeTab(3);
+
+    ui->tabWidget->insertTab(3,page1,"生成根证书");
+    ui->tabWidget->insertTab(4,page2,"生成用户证书");
+
 
 
     //为前两个签名页treeview设置model
