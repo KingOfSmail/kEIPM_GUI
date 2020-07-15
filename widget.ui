@@ -29,7 +29,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -531,6 +531,16 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="lab_UserLimit">
+            <property name="text">
+             <string>证书有效期(/天）</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="spinBox_UserLimit"/>
+          </item>
          </layout>
         </widget>
        </item>
@@ -676,6 +686,16 @@
              <cstring>lineEd_UserCountry</cstring>
             </property>
            </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="lab_RootLimit">
+            <property name="text">
+             <string>证书有效期(/天）</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="spinBox_RootLimit"/>
           </item>
          </layout>
         </widget>

@@ -32,6 +32,7 @@ Widget::Widget(QWidget *parent)
     ui->tabWidget->insertTab(3,page1,"生成根证书");
     ui->tabWidget->insertTab(4,page2,"生成用户证书");
 
+    ui->spinBox_RootLimit->setMaximum(3650);
 
 
     //为前两个签名页treeview设置model
@@ -87,9 +88,10 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
     QSet<QString> temp_TotalPath = Total_Elf_Path;
 
     QSet<QString> Success_SignElf;
+
     keipm_err_t e;
     int count = 0;
-    if(Path.isEmpty()) {
+    if(!Path.isEmpty()) {
         fin->setWindowTitle("Defeat");
         fin->setFlag(false);
         fin->set_textContent(QString("错误提示：\n未选择%1文件.").arg(is_prikey ? "私钥" : "证书"));
@@ -99,6 +101,7 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
         fin = nullptr;
         goto eo;
     }
+
     if(Total_Elf_Path.isEmpty()){
         fin->setWindowTitle("Defeat");
         fin->setFlag(false);
@@ -114,7 +117,6 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
         const char* tempElfPath = ba_it.data();
         QByteArray ba_Path = Path.toUtf8();
         const char* tempUserCA = ba_Path.data();
-
         //
         e = Sign_elf_(tempUserCA,tempElfPath);
         //
@@ -143,6 +145,7 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
         Success_SignElf.insert(t);
         temp_TotalPath -= t;
         count++;
+
         tempUserCA = nullptr;
         tempElfPath = nullptr;
     }
@@ -215,6 +218,8 @@ void Widget::on_Btn_RsaSign_Inport_clicked()
     const QSet<QString> &Total_Elf_Path = qfsm_forRsaSign_Page->getSelectedFiles();
 
     QString Public_Key = ui->lineEd_RsaSign_rsa->text();
+
+
     newpage_Of_Finished(Total_Elf_Path,true,Public_Key,keipm_set_Key);
 }
 
@@ -379,11 +384,15 @@ static keipm_err_t checkCertInfo(
         const QString &User_State,
         const QString &User_Country,
         const QString &User_Org_name,
-        const QString &User_Common_name)
+        const QString &User_Common_name,
+        const int &User_Limit
+        )
 {
     if (User_Local.isEmpty() || User_State.isEmpty() || User_Country.isEmpty()
             || User_Org_name.isEmpty() || User_Common_name.isEmpty()) {
         return ERROR(kEIPM_ERR_INVALID, "证书有字段为空，请检查");
+    }else if(User_Limit == 0){
+        return ERROR(kEIPM_ERR_INVALID, "证书有效期为0，请重新设置");
     }
     if (User_Country.length() != 2) {
         return ERROR(kEIPM_ERR_INVALID, "“所在国家 C”字段必须为2个字节");
@@ -414,13 +423,14 @@ void Widget::on_pushButton_2_clicked()
     QByteArray ba5 = ui->lineEd_User_InputPath_RootCA->text().toUtf8();
     userca.User_input_RootCA_Path = ba5.data();
 
+    userca.User_Limit = ui->spinBox_UserLimit->value();
     if (ba5.isEmpty()) {
         remindPage(ERROR(kEIPM_ERR_INVALID, "未选择根证书文件"));
         return;
     }
 
     error = checkCertInfo(userca.User_Local, userca.User_State, userca.User_Country,
-                          userca.User_Org_name, userca.User_Common_name);
+                          userca.User_Org_name, userca.User_Common_name,userca.User_Limit);
     if (error.errno != kEIPM_OK) {
         remindPage(error);
         return;
@@ -471,8 +481,10 @@ void Widget::on_Btn_output_RootCA_clicked()
     QByteArray ba4 = ui->lineEd_RootCommon->text().toUtf8();
     Root_CA.Root_Common_name = ba.data();
 
+    Root_CA.Root_Limit = ui->spinBox_RootLimit->value();
+
     error = checkCertInfo(Root_CA.Root_Local, Root_CA.Root_State, Root_CA.Root_Country,
-                          Root_CA.Root_Org_name, Root_CA.Root_Common_name);
+                          Root_CA.Root_Org_name, Root_CA.Root_Common_name,Root_CA.Root_Limit);
     if (error.errno != kEIPM_OK) {
         remindPage(error);
         return;
