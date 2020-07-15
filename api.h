@@ -13,6 +13,7 @@ typedef struct rootCa_inf{
     const char* Root_Local;
     const char* Root_State;
     const char* Root_Country;
+    int Root_Limit;
 }RootCa;
 
 typedef struct UserCa_inf{
@@ -22,6 +23,7 @@ typedef struct UserCa_inf{
     const char* User_State;
     const char* User_Country;
     const char* User_input_RootCA_Path;
+    int User_Limit;
 }UserCa;
 
 
