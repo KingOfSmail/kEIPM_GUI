@@ -25,6 +25,7 @@ private:
     bool setData( const QModelIndex &index, const QVariant &value, int role);
 
     mutable QMap<QModelIndex,bool> m_indexMap;
+    mutable QMap<QString,bool> m_pathMap;
     QTreeView *m_treeView;
 
 };

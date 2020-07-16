@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "api.h"
-#define DEBUG_API
+#include "../api.h"
+#undef DEBUG_API
 
 #ifdef DEBUG_API
 
@@ -52,7 +52,7 @@ keipm_err_t keipm_create_rootCA(const char *rootCA_Path, const RootCa *rootca){
     }
 }
 
-keipm_err_t keipm_create_userCA(const char *out_cert_path,const UserCa *userca){
+keipm_err_t keipm_create_userCA(const char *out_cert_path,const char *pri_key, const UserCa *userca){
     (void)out_cert_path;
     (void)userca;
     if(rand() & 1){

@@ -45,6 +45,7 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
                 if (iChecked == Qt::Checked)
                 {
                     m_indexMap[index] = true;
+                    m_pathMap[filePath((index))] = true;
                     if(hasChildren(index) && rowCount(index) == 0){
                         m_treeView->expand(index);
                     }
@@ -52,6 +53,7 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
                 else
                 {
                     m_indexMap[index] = false;
+                    m_pathMap[filePath((index))] = false;
                 }
 
                 return iChecked;
@@ -72,12 +74,14 @@ bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &va
         if (value == Qt::Unchecked)
         {
             m_indexMap[index] = false;
+            m_pathMap[filePath((index))] = false;
             //refresh it's child node
             emit dataChanged(index, index);
         }
         else if (value == Qt::Checked)
         {
             m_indexMap[index] = true;
+            m_pathMap[filePath((index))] = true;
             //refresh it's child node
             emit dataChanged(index, index);
         }
@@ -105,10 +109,10 @@ bool QFileSystemModelImpl::setData( const QModelIndex &index, const QVariant &va
 QSet<QString> QFileSystemModelImpl::getSelectedFiles() const
 {
     QSet<QString> ret;
-    QMap<QModelIndex,bool>::const_iterator it = m_indexMap.constBegin();
-    for(;it!=m_indexMap.constEnd(); ++it) {
+    QMap<QString,bool>::const_iterator it = m_pathMap.constBegin();
+    for(;it!=m_pathMap.constEnd(); ++it) {
         if (it.value()) {
-            ret.insert(filePath(it.key()));
+            ret.insert(it.key());
         }
     }
     return ret;

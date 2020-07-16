@@ -7,7 +7,7 @@
 
 #include "qfilesystemmodelimpl.h"
 #include "finish_close.h"
-#include "api.h"
+#include "../api.h"
 #include "errors.h"
 
 
