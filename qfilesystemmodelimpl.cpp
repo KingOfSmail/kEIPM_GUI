@@ -19,6 +19,10 @@ QVariant QFileSystemModelImpl::data(const QModelIndex &index, int role) const
 
     if (index.column() == 0 && role == Qt::CheckStateRole)
         {
+            if(isDir(index)) {
+                return QVariant();
+            }
+
             if (m_indexMap.contains(index))
             {
                 return m_indexMap[index] ? Qt::Checked : Qt::Unchecked;

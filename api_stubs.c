@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "../api.h"
-#define DEBUG_API
+#undef DEBUG_API
 
 #ifdef DEBUG_API
 

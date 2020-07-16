@@ -58,7 +58,7 @@
       <item>
        <widget class="QPushButton" name="Btn_Finish">
         <property name="text">
-         <string>完成</string>
+         <string>确定</string>
         </property>
        </widget>
       </item>
