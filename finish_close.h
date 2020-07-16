@@ -15,14 +15,13 @@ public:
     explicit Finish_Close(QWidget *parent = nullptr);
     ~Finish_Close();
 
-    bool getFlag() const;
-    void setFlag(bool value);
     void set_textContent(const QString &str_reason);
 
-    bool close_flag;
 private slots:
 
     void on_Btn_Finish_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::Finish_Close *ui;

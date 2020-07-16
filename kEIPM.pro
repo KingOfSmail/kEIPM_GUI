@@ -1,6 +1,6 @@
 QT       += core gui
 INCLUDEPATH += ./include
-LIBS += -L../build -lsigelf -lssl -lcrypto
+#LIBS += -L../build -lsigelf -lssl -lcrypto
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,7 +28,6 @@ HEADERS += \
     finish_close.h \
     qfilesystemmodelimpl.h \
     widget.h \
-    api.h \
     errors.h
 
 FORMS += \
