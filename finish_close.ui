@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>337</width>
-    <height>256</height>
+    <width>488</width>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,6 +59,13 @@
        <widget class="QPushButton" name="Btn_Finish">
         <property name="text">
          <string>完成</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>取消</string>
         </property>
        </widget>
       </item>

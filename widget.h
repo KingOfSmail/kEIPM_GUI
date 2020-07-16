@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QTabBar>
 #include <QTextCodec>
+#include <QStandardItem>
 
 #include "qfilesystemmodelimpl.h"
 #include "finish_close.h"
@@ -62,6 +63,7 @@ private slots:
     void on_Btn_output_RootCA_clicked();
 
     void on_pushButton_2_clicked();
+
 
 private:
     Ui::Widget *ui;

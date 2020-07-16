@@ -76,13 +76,12 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
 
     QSet<QString> temp_TotalPath = Total_Elf_Path;
 
-    QSet<QString> Success_SignElf;
+     QSet<QString> Success_SignElf;
 
     keipm_err_t e;
     int count = 0;
     if(Path.isEmpty()) {
         fin->setWindowTitle("Defeat");
-        fin->setFlag(false);
         fin->set_textContent(QString("错误提示：\n未选择%1文件.").arg(is_prikey ? "私钥" : "证书"));
         fin->exec();
 
@@ -93,7 +92,6 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
 
     if(Total_Elf_Path.isEmpty()){
         fin->setWindowTitle("Defeat");
-        fin->setFlag(false);
         fin->set_textContent("错误提示：\n未选择待签名ELF文件.");
         fin->exec();
 
@@ -113,7 +111,6 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
 
         if(e.errno){
             fin->setWindowTitle("Defeat");
-            fin->setFlag(false);
             fin->set_textContent("已完成");
 
             QString s = QString::number(count, 10);
@@ -145,7 +142,6 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
 
     if(temp_TotalPath.isEmpty()){
         fin->setWindowTitle("Finish");
-        fin->setFlag(true);
         fin->set_textContent(e.reason ? e.reason : "操作成功完成");
         fin->exec();
 
@@ -183,7 +179,18 @@ void Widget::on_Btn_Inport_clicked()
     const QSet<QString> &Total_Elf_Path = qfsm_forCASign_Page->getSelectedFiles();
 
     QString CA_path = ui->lineEd_CASign_CA->text();
-    newpage_Of_Finished(Total_Elf_Path,false,CA_path,keipm_set_UserCA);
+
+    Finish_Close* remind_page = new Finish_Close(this);
+    remind_page->set_textContent("请确认是否对以下文件进行签名：\n");
+    foreach (QString it, Total_Elf_Path) {
+        remind_page->set_textContent(it);
+        remind_page->set_textContent("\n");
+    }
+
+    if(remind_page->exec()){
+        newpage_Of_Finished(Total_Elf_Path,false,CA_path,keipm_set_UserCA);
+    }
+
 }
 
 void Widget::on_Btn_CASign_CA_clicked()
@@ -212,7 +219,17 @@ void Widget::on_Btn_RsaSign_Inport_clicked()
     QString Public_Key = ui->lineEd_RsaSign_rsa->text();
 
 
-    newpage_Of_Finished(Total_Elf_Path,true,Public_Key,keipm_set_Key);
+    Finish_Close* remind_page = new Finish_Close(this);
+    remind_page->set_textContent("请确认是否对以下文件进行签名：\n");
+    foreach (QString it, Total_Elf_Path) {
+        remind_page->set_textContent(it);
+        remind_page->set_textContent("\n");
+    }
+
+    if(remind_page->exec()){
+       newpage_Of_Finished(Total_Elf_Path,true,Public_Key,keipm_set_Key);
+    }
+
 }
 
 // End of CASign Page
@@ -510,7 +527,6 @@ void Widget::remindPage(keipm_err_t error)
     Finish_Close* fin = new Finish_Close(this);
     if(error.errno){
         fin->setWindowTitle("Defeat");
-        fin->setFlag(false);
         fin->set_textContent("错误提示：\n");
         fin->set_textContent(error.reason);
         fin->exec();
@@ -519,7 +535,6 @@ void Widget::remindPage(keipm_err_t error)
         fin = nullptr;
     }else{
         fin->setWindowTitle("Finish");
-        fin->setFlag(true);
         fin->set_textContent(error.reason ? error.reason : "操作成功完成");
         fin->exec();
 
@@ -529,3 +544,5 @@ void Widget::remindPage(keipm_err_t error)
 }
 
 //End of finished_close Page
+
+
