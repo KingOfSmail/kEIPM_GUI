@@ -11,7 +11,6 @@ Widget::Widget(QWidget *parent)
 
     ui->tabWidget->setCurrentIndex(0);
 
-    /*
     //构造时remove后三个页面
     if(!ui->Manage_model->checkState()){
         page[2] = ui->tabWidget->widget(4);
@@ -21,16 +20,6 @@ Widget::Widget(QWidget *parent)
         page[0] = ui->tabWidget->widget(2);
         ui->tabWidget->removeTab(2);
     }
-    */
-
-    QWidget* page1,*page2;
-    page1 = ui->tabWidget->widget(4);
-    page2 = ui->tabWidget->widget(3);
-    ui->tabWidget->removeTab(4);
-    ui->tabWidget->removeTab(3);
-
-    ui->tabWidget->insertTab(3,page1,"生成根证书");
-    ui->tabWidget->insertTab(4,page2,"生成用户证书");
 
     ui->spinBox_RootLimit->setMaximum(3650);
 
@@ -91,7 +80,7 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
 
     keipm_err_t e;
     int count = 0;
-    if(!Path.isEmpty()) {
+    if(Path.isEmpty()) {
         fin->setWindowTitle("Defeat");
         fin->setFlag(false);
         fin->set_textContent(QString("错误提示：\n未选择%1文件.").arg(is_prikey ? "私钥" : "证书"));
@@ -112,6 +101,7 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
         fin = nullptr;
         goto eo;
     }
+    setCursor(Qt::WaitCursor);
     for(QString it :Total_Elf_Path){
         QByteArray ba_it = it.toUtf8();
         const char* tempElfPath = ba_it.data();
@@ -139,6 +129,7 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
             const char* Fail_f = ba_temp2.data();
             fin->set_textContent(Fail_f);
             fin->set_textContent("个文件。\n");
+            setCursor(Qt::ArrowCursor);
             goto Page_error;
         }
         const char* t = tempElfPath;
@@ -149,12 +140,13 @@ void Widget::newpage_Of_Finished(const QSet<QString> &Total_Elf_Path,bool is_pri
         tempUserCA = nullptr;
         tempElfPath = nullptr;
     }
+    setCursor(Qt::ArrowCursor);
 
 
     if(temp_TotalPath.isEmpty()){
         fin->setWindowTitle("Finish");
         fin->setFlag(true);
-        fin->set_textContent(e.reason);
+        fin->set_textContent(e.reason ? e.reason : "操作成功完成");
         fin->exec();
 
         fin->deleteLater();
@@ -199,7 +191,7 @@ void Widget::on_Btn_CASign_CA_clicked()
     QString userCert_pathname = QFileDialog::getOpenFileName(this,
                                                                tr("打开证书"),
                                                                "user.der",
-                                                               tr("DER编码证书(*der)"));
+                                                               tr("DER编码证书(*.der)"));
     if (userCert_pathname.length()) {
         ui->lineEd_CASign_CA->setText(userCert_pathname);
     }
@@ -233,7 +225,7 @@ void Widget::on_Btn_RsaSign_rsa_clicked()
     QString prikey_pathname = QFileDialog::getOpenFileName(this,
                                                            tr("打开RSA私钥"),
                                                            "private_pkcs1.pem",
-                                                           tr("PEM私钥(*pem)"));
+                                                           tr("PEM私钥(*.pem)"));
     if (prikey_pathname.length()) {
         ui->lineEd_RsaSign_rsa->setText(prikey_pathname);
     }
@@ -254,7 +246,7 @@ void Widget::on_Btn_GetRsa_publicKey_clicked()
     QString pubkey_path = QFileDialog::getOpenFileName(this,
                                                        tr("打开公钥"),
                                                        "public_pkcs1.pem",
-                                                       tr("PEM公钥(*pem)"));
+                                                       tr("PEM公钥(*.pem)"));
     if (pubkey_path.length()) {
         ui->lineEd_GetRsa_inport_public_privateKey->setText(pubkey_path);
     }
@@ -266,7 +258,7 @@ void Widget::on_Btn_GetRsa_Create_privateKey_clicked()
     QString str_private_path = QFileDialog::getSaveFileName(this,
                                                              tr("选择私钥保存位置"),
                                                              "private_pkcs1.pem",
-                                                             tr("PEM私钥(*pem)"));
+                                                             tr("PEM私钥(*.pem)"));
     if (str_private_path.isEmpty()) {
         return;
     }
@@ -300,7 +292,7 @@ void Widget::on_Btn_GetRsa_Create_publicKey_clicked()
     QString str_public_path = QFileDialog::getSaveFileName(this,
                                                            tr("选择公钥保存位置"),
                                                            "public_pkcs1.pem",
-                                                           tr("PEM公钥(*pem)"));
+                                                           tr("PEM公钥(*.pem)"));
     // If user has pushed cancel button
     if (str_public_path.isEmpty()) {
         return;
@@ -319,7 +311,7 @@ void Widget::on_Btn_GetRsa_Create_clicked()
     QString private_path = QFileDialog::getSaveFileName(this,
                                                         tr("选择私钥保存位置"),
                                                         "private_pkcs1.pem",
-                                                        tr("PEM私钥(*pem)"));
+                                                        tr("PEM私钥(*.pem)"));
     // If user has pushed cancel button
     if (private_path.isEmpty()) {
         return;
@@ -339,8 +331,8 @@ void Widget::on_Btn_GetRsa_Create_clicked()
 
     QString public_path = QFileDialog::getSaveFileName(this,
                                                        tr("选择公钥保存位置"),
-                                                       "private_pkcs1.pem",
-                                                       tr("PEM公钥(*pem)"));
+                                                       "public_pkcs1.pem",
+                                                       tr("PEM公钥(*.pem)"));
     // If user has pushed cancel button
     if (public_path.isEmpty()) {
         return;
@@ -371,8 +363,8 @@ void Widget::on_Btn_User_Visit_RootCA_clicked()
 {
     QString rootCA_pathname = QFileDialog::getOpenFileName(this,
                                                            tr("打开CA根证书"),
-                                                           "root_ca.der",
-                                                           tr("DER编码证书(*der)"));
+                                                           "ca.der",
+                                                           tr("DEC证书(*.der)"));
 
     if (rootCA_pathname.length()) {
         ui->lineEd_User_InputPath_RootCA->setText(rootCA_pathname);
@@ -384,15 +376,12 @@ static keipm_err_t checkCertInfo(
         const QString &User_State,
         const QString &User_Country,
         const QString &User_Org_name,
-        const QString &User_Common_name,
-        const int &User_Limit
+        const QString &User_Common_name
         )
 {
     if (User_Local.isEmpty() || User_State.isEmpty() || User_Country.isEmpty()
             || User_Org_name.isEmpty() || User_Common_name.isEmpty()) {
         return ERROR(kEIPM_ERR_INVALID, "证书有字段为空，请检查");
-    }else if(User_Limit == 0){
-        return ERROR(kEIPM_ERR_INVALID, "证书有效期为0，请重新设置");
     }
     if (User_Country.length() != 2) {
         return ERROR(kEIPM_ERR_INVALID, "“所在国家 C”字段必须为2个字节");
@@ -423,14 +412,14 @@ void Widget::on_pushButton_2_clicked()
     QByteArray ba5 = ui->lineEd_User_InputPath_RootCA->text().toUtf8();
     userca.User_input_RootCA_Path = ba5.data();
 
-    userca.User_Limit = ui->spinBox_UserLimit->value();
+    userca.days = ui->spinBox_UserLimit->value();
     if (ba5.isEmpty()) {
         remindPage(ERROR(kEIPM_ERR_INVALID, "未选择根证书文件"));
         return;
     }
 
     error = checkCertInfo(userca.User_Local, userca.User_State, userca.User_Country,
-                          userca.User_Org_name, userca.User_Common_name,userca.User_Limit);
+                          userca.User_Org_name, userca.User_Common_name);
     if (error.errno != kEIPM_OK) {
         remindPage(error);
         return;
@@ -481,10 +470,10 @@ void Widget::on_Btn_output_RootCA_clicked()
     QByteArray ba4 = ui->lineEd_RootCommon->text().toUtf8();
     Root_CA.Root_Common_name = ba.data();
 
-    Root_CA.Root_Limit = ui->spinBox_RootLimit->value();
+    Root_CA.days = ui->spinBox_RootLimit->value();
 
     error = checkCertInfo(Root_CA.Root_Local, Root_CA.Root_State, Root_CA.Root_Country,
-                          Root_CA.Root_Org_name, Root_CA.Root_Common_name,Root_CA.Root_Limit);
+                          Root_CA.Root_Org_name, Root_CA.Root_Common_name);
     if (error.errno != kEIPM_OK) {
         remindPage(error);
         return;
@@ -492,7 +481,7 @@ void Widget::on_Btn_output_RootCA_clicked()
 
     QString rootCA_pathname = QFileDialog::getSaveFileName(this,
                                                            tr("保存CA根证书"),
-                                                           "root_ca.der",
+                                                           "ca.der",
                                                            tr("DER编码证书(*der)"));
     if (rootCA_pathname.isEmpty()) {
         return;
@@ -531,7 +520,7 @@ void Widget::remindPage(keipm_err_t error)
     }else{
         fin->setWindowTitle("Finish");
         fin->setFlag(true);
-        fin->set_textContent(error.reason);
+        fin->set_textContent(error.reason ? error.reason : "操作成功完成");
         fin->exec();
 
         fin->deleteLater();
